@@ -21,6 +21,14 @@ fn get_todos() -> Vec<Todo> {
     todos
 }
 
+fn update_file(todos: Vec<Todo>) {
+    let mut file = fs::File::create("todos.txt").expect("Failed to open file");
+    for todo in &todos {
+        let status = if todo.completed { "[x]" } else { "[ ]" };
+        writeln!(file, "{} {}", status, todo.text).expect("Failed to write");
+    }
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
 
@@ -69,10 +77,7 @@ fn main() {
 
             todos.remove(index);
 
-            let mut file = fs::File::create("todos.txt").expect("Failed to open file");
-            for todo in &todos {
-                writeln!(file, "{} {}", todo.completed, todo.text).expect("Failed to write");
-            }
+            update_file(todos);
         }
         "complete" => {
             if args.len() < 3 {
@@ -82,11 +87,7 @@ fn main() {
             let mut todos = get_todos();
             let index: usize = args[2].parse().expect("Invalid number");
             todos[index].completed = true;
-            let mut file = fs::File::create("todos.txt").expect("Failed to open file");
-            for todo in &todos {
-                let status = if todo.completed { "[x]" } else { "[ ]" };
-                writeln!(file, "{} {}", status, todo.text).expect("Failed to write");
-            }
+            update_file(todos);
         }
         _ => println!("Unknown command"),
     }
