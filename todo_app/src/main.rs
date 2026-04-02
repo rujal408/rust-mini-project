@@ -69,20 +69,13 @@ fn main() {
                 println!("Please provide task index");
                 return;
             }
-            let todos = get_todos();
+            let mut todos = get_todos();
             let index: usize = args[2].parse().expect("Invalid number");
-
+            todos[index].completed = true;
             let mut file = fs::File::create("todos.txt").expect("Failed to open file");
-            for (i, todo) in todos.iter().enumerate() {
-                if i == index {
-                    writeln!(file, "[x] {}", todo.text);
-                } else {
-                    if todo.completed == false {
-                        writeln!(file, "[ ] {}", todo.text);
-                    } else {
-                        writeln!(file, "[x] {}", todo.text);
-                    }
-                }
+            for todo in &todos {
+                let status = if todo.completed { "[x]" } else { "[ ]" };
+                writeln!(file, "{} {}", status, todo.text).expect("Failed to write");
             }
         }
         _ => println!("Unknown command"),
