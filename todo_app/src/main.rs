@@ -63,6 +63,16 @@ fn main() {
                 println!("Please provide a task to add");
                 return;
             }
+
+            let mut todos = get_todos();
+            let index: usize = args[2].parse().expect("Invalid number");
+
+            todos.remove(index);
+
+            let mut file = fs::File::create("todos.txt").expect("Failed to open file");
+            for todo in &todos {
+                writeln!(file, "{} {}", todo.completed, todo.text).expect("Failed to write");
+            }
         }
         "complete" => {
             if args.len() < 3 {
