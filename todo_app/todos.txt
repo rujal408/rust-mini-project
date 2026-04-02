@@ -1,2 +1,3 @@
-[ ] First one
-[ ] Second one
+[x] One
+[x] Two
+[x] Three
