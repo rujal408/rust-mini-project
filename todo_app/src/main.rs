@@ -3,6 +3,13 @@ use std::fs;
 use std::fs::OpenOptions;
 use std::io::Write;
 
+enum Command {
+    Add(String),
+    List,
+    Complete(usize),
+    Delete(usize),
+}
+
 struct Todo {
     text: String,
     completed: bool,
@@ -29,6 +36,60 @@ fn update_file(todos: Vec<Todo>) {
     }
 }
 
+fn parse_command(args: Vec<String>) -> Option<Command> {
+    if args.len() < 2 {
+        println!("Usage: cargo run <command> [value]");
+        return None;
+    }
+
+    match args[1].as_str() {
+        "add" => {
+            if args.len() < 3 {
+                println!("Please provide a task");
+                return None;
+            }
+            Some(Command::Add(args[2].clone()))
+        }
+
+        "list" => Some(Command::List),
+
+        "complete" => {
+            if args.len() < 3 {
+                println!("Please provide index");
+                return None;
+            }
+
+            match args[2].parse() {
+                Ok(i) => Some(Command::Complete(i)),
+                Err(_) => {
+                    println!("Invalid number");
+                    None
+                }
+            }
+        }
+
+        "delete" => {
+            if args.len() < 3 {
+                println!("Please provide index");
+                return None;
+            }
+
+            match args[2].parse() {
+                Ok(i) => Some(Command::Delete(i)),
+                Err(_) => {
+                    println!("Invalid number");
+                    None
+                }
+            }
+        }
+
+        _ => {
+            println!("Unknown command");
+            None
+        }
+    }
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
 
@@ -38,16 +99,14 @@ fn main() {
         println!("Usage: cargo run <command> <value>");
         return;
     }
-    let command = args[1].as_str();
+
+    let command = match parse_command(args) {
+        Some(cmd) => cmd,
+        None => return,
+    };
 
     match command {
-        "add" => {
-            if args.len() < 3 {
-                println!("Please provide a task to add");
-                return;
-            }
-            let value = &args[2];
-
+        Command::Add(value) => {
             let mut file = OpenOptions::new()
                 .append(true)
                 .create(true)
@@ -57,7 +116,7 @@ fn main() {
             writeln!(file, "[ ] {}", value).expect("Failed to write");
             println!("Task added: {}", value);
         }
-        "list" => {
+        Command::List => {
             let todos = get_todos();
 
             for todo in &todos {
@@ -66,26 +125,13 @@ fn main() {
             }
         }
 
-        "delete" => {
-            if args.len() < 3 {
-                println!("Please provide a task to add");
-                return;
-            }
-
+        Command::Delete(index) => {
             let mut todos = get_todos();
-            let index: usize = args[2].parse().expect("Invalid number");
-
             todos.remove(index);
-
             update_file(todos);
         }
-        "complete" => {
-            if args.len() < 3 {
-                println!("Please provide task index");
-                return;
-            }
+        Command::Complete(index) => {
             let mut todos = get_todos();
-            let index: usize = args[2].parse().expect("Invalid number");
             todos[index].completed = true;
             update_file(todos);
         }
