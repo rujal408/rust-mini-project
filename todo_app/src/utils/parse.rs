@@ -1,3 +1,5 @@
+use crate::enums::Command;
+
 pub fn parse_command(args: Vec<String>) -> Option<Command> {
     if args.len() < 2 {
         println!("Usage: cargo run <command> [value]");
