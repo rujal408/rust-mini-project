@@ -1,16 +1,10 @@
+mod enums;
+use enums::Command;
 use std::env;
 use std::fs;
 use std::fs::OpenOptions;
 use std::io;
 use std::io::Write;
-enum Command {
-    Add(String),
-    List,
-    Complete(usize),
-    Edit(usize, String),
-    Delete(usize),
-    Clear,
-}
 
 struct Todo {
     text: String,
