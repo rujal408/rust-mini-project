@@ -49,7 +49,7 @@ fn parse_command(args: Vec<String>) -> Option<Command> {
                 println!("Please provide a task");
                 return None;
             }
-            Some(Command::Add(args[2].clone()))
+            Some(Command::Add(args[2..].join(" ").clone()))
         }
 
         "list" => Some(Command::List),
@@ -97,7 +97,7 @@ fn parse_command(args: Vec<String>) -> Option<Command> {
                     return None;
                 }
             };
-            Some(Command::Edit(index, args[3].clone()))
+            Some(Command::Edit(index, args[3..].join(" ").clone()))
         }
 
         _ => {
