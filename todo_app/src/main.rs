@@ -135,6 +135,5 @@ fn main() {
             todos[index].completed = true;
             update_file(todos);
         }
-        _ => println!("Unknown command"),
     }
 }
