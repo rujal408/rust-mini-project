@@ -5,4 +5,5 @@ pub enum Command {
     Edit(usize, String),
     Delete(usize),
     Clear,
+    Help,
 }

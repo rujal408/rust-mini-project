@@ -96,6 +96,7 @@ fn parse_command(args: Vec<String>) -> Option<Command> {
         }
 
         "clear" => Some(Command::Clear),
+        "help" => Some(Command::Help),
 
         _ => {
             println!("Unknown command");
@@ -130,6 +131,7 @@ fn main() {
             writeln!(file, "[ ] {}", value).expect("Failed to write");
             println!("Task added: {}", value);
         }
+
         Command::List => {
             let todos = get_todos();
 
@@ -150,6 +152,7 @@ fn main() {
             todos.remove(index);
             update_file(todos);
         }
+
         Command::Complete(index) => {
             let mut todos = get_todos();
             todos[index].completed = true;
@@ -168,6 +171,17 @@ fn main() {
             } else {
                 println!("Cancelled");
             }
+        }
+
+        Command::Help => {
+            println!("Available commands:");
+            println!("add <task>          Add a new task");
+            println!("list                Show all tasks");
+            println!("complete <index>    Mark task as completed");
+            println!("delete <index>      Delete a task");
+            println!("edit <index> <text> Edit a task");
+            println!("clear               Remove all tasks");
+            println!("help                Show this help message");
         }
     }
 }
