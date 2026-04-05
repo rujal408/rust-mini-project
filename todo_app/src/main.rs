@@ -7,6 +7,7 @@ enum Command {
     Add(String),
     List,
     Complete(usize),
+    Edit(usize, String),
     Delete(usize),
 }
 
@@ -83,6 +84,22 @@ fn parse_command(args: Vec<String>) -> Option<Command> {
             }
         }
 
+        "edit" => {
+            if args.len() < 4 {
+                println!("Please provide <index> and <new text>");
+                return None;
+            }
+
+            let index = match args[2].parse() {
+                Ok(i) => i,
+                Err(_) => {
+                    println!("Invalid index");
+                    return None;
+                }
+            };
+            Some(Command::Edit(index, args[3].clone()))
+        }
+
         _ => {
             println!("Unknown command");
             None
@@ -123,6 +140,12 @@ fn main() {
                 let status = if todo.completed { "[x]" } else { "[ ]" };
                 println!("{} {}", status, todo.text);
             }
+        }
+
+        Command::Edit(index, text) => {
+            let mut todos = get_todos();
+            todos[index].text = text;
+            update_file(todos);
         }
 
         Command::Delete(index) => {
