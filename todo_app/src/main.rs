@@ -9,6 +9,7 @@ enum Command {
     Complete(usize),
     Edit(usize, String),
     Delete(usize),
+    Clear,
 }
 
 struct Todo {
@@ -100,6 +101,8 @@ fn parse_command(args: Vec<String>) -> Option<Command> {
             Some(Command::Edit(index, args[3..].join(" ").clone()))
         }
 
+        "clear" => Some(Command::Clear),
+
         _ => {
             println!("Unknown command");
             None
@@ -157,6 +160,10 @@ fn main() {
             let mut todos = get_todos();
             todos[index].completed = true;
             update_file(todos);
+        }
+
+        Command::Clear => {
+            fs::write("todos.txt", "").expect("Failed to clear file");
         }
     }
 }
