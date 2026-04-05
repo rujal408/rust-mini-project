@@ -1,8 +1,8 @@
 use std::env;
 use std::fs;
 use std::fs::OpenOptions;
+use std::io;
 use std::io::Write;
-
 enum Command {
     Add(String),
     List,
@@ -163,7 +163,17 @@ fn main() {
         }
 
         Command::Clear => {
-            fs::write("todos.txt", "").expect("Failed to clear file");
+            println!("Are you sure? (y/n)");
+
+            let mut input = String::new();
+            io::stdin().read_line(&mut input).expect("Failed to read");
+
+            if input.trim() == "y" {
+                fs::write("todos.txt", "").expect("Failed to clear file");
+                println!("All tasks cleared");
+            } else {
+                println!("Cancelled");
+            }
         }
     }
 }
