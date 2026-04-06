@@ -123,9 +123,11 @@ fn main() {
                 }
             };
 
-            for line in content.lines() {
-                if line.contains(&keyword) {
-                    println!("{}", line);
+            let lower_case = keyword.to_lowercase();
+
+            for (i, line) in content.lines().enumerate() {
+                if line.to_lowercase().contains(&lower_case) {
+                    println!("{}: {}", i + 1, line);
                 }
             }
         }
