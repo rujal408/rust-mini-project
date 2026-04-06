@@ -104,13 +104,14 @@ fn main() {
 
         Command::Help => {
             println!("Available commands:");
-            println!("add <task>          Add a new task");
-            println!("list                Show all tasks");
-            println!("complete <index>    Mark task as completed");
-            println!("delete <index>      Delete a task");
-            println!("edit <index> <text> Edit a task");
-            println!("clear               Remove all tasks");
-            println!("help                Show this help message");
+            println!("add <task>                Add a new task");
+            println!("list                      Show all tasks");
+            println!("complete <index>          Mark task as completed");
+            println!("delete <index>            Delete a task");
+            println!("edit <index> <text>       Edit a task");
+            println!("clear                     Remove all tasks");
+            println!("help                       Show this help message");
+            println!("grep <keyword> <filename> Search content from file")
         }
 
         Command::Grep(keyword, filename) => {
