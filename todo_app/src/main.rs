@@ -115,7 +115,12 @@ fn main() {
             println!("grep <keyword> <filename> Search content from file")
         }
 
-        Command::Grep(keyword, filename) => {
+        Command::Grep {
+            keyword,
+            filename,
+            ignore_case,
+            show_line_number,
+        } => {
             let content = match fs::read_to_string(&filename) {
                 Ok(data) => data,
                 Err(_) => {
@@ -124,7 +129,11 @@ fn main() {
                 }
             };
 
-            let keyword_lower = keyword.to_lowercase();
+            let keyword_lower = if ignore_case {
+                keyword.to_lowercase()
+            } else {
+                keyword.clone()
+            };
 
             for (i, line) in content.lines().enumerate() {
                 let line_lower = line.to_lowercase();
@@ -152,7 +161,11 @@ fn main() {
                     // push remaining text
                     highlighted.push_str(&line[start..]);
 
-                    println!("{}: {}", i + 1, highlighted);
+                    if show_line_number {
+                        println!("{}: {}", i + 1, highlighted);
+                    } else {
+                        println!("{}", highlighted);
+                    }
                 }
             }
         }

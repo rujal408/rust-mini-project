@@ -67,14 +67,42 @@ pub fn parse_command(args: Vec<String>) -> Option<Command> {
         "help" => Some(Command::Help),
         "grep" => {
             if args.len() < 4 {
-                println!("Usage: grep <keyword> <file>");
+                println!("Usage: grep [-i] [-n] <keyword> <file>");
                 return None;
             }
 
-            let keyword = args[2].clone();
-            let filename = args[3].clone();
+            let mut ignore_case = false;
+            let mut show_line_number = false;
 
-            Some(Command::Grep(keyword, filename))
+            let mut index = 2;
+
+            // Parse flags
+            while args[index].starts_with("-") {
+                match args[index].as_str() {
+                    "-i" => ignore_case = true,
+                    "-n" => show_line_number = true,
+                    _ => {
+                        println!("Unknown flag: {}", args[index]);
+                        return None;
+                    }
+                }
+                index += 1;
+            }
+
+            if args.len() <= index + 1 {
+                println!("Missing keyword or filename");
+                return None;
+            }
+
+            let keyword = args[index].clone();
+            let filename = args[index + 1].clone();
+
+            Some(Command::Grep {
+                keyword,
+                filename,
+                ignore_case,
+                show_line_number,
+            })
         }
 
         _ => {

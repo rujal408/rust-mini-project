@@ -6,5 +6,10 @@ pub enum Command {
     Delete(usize),
     Clear,
     Help,
-    Grep(String, String),
+    Grep {
+        keyword: String,
+        filename: String,
+        ignore_case: bool,
+        show_line_number: bool,
+    },
 }
