@@ -1,6 +1,7 @@
 mod enums;
 use enums::Command;
 mod utils;
+use colored::*;
 use std::env;
 use std::fs;
 use std::fs::OpenOptions;
@@ -123,11 +124,35 @@ fn main() {
                 }
             };
 
-            let lower_case = keyword.to_lowercase();
+            let keyword_lower = keyword.to_lowercase();
 
             for (i, line) in content.lines().enumerate() {
-                if line.to_lowercase().contains(&lower_case) {
-                    println!("{}: {}", i + 1, line);
+                let line_lower = line.to_lowercase();
+                if line_lower.contains(&keyword_lower) {
+                    let mut highlighted = String::new();
+
+                    let mut start = 0;
+
+                    while let Some(pos) = line_lower[start..].find(&keyword_lower) {
+                        let real_pos = start + pos;
+
+                        // push text before match
+                        highlighted.push_str(&line[start..real_pos]);
+
+                        // push highlighted match
+                        let end = real_pos + keyword.len();
+                        highlighted.push_str(&format!(
+                            "{}",
+                            &line[real_pos..end].red().bold().to_string()
+                        ));
+
+                        start = end;
+                    }
+
+                    // push remaining text
+                    highlighted.push_str(&line[start..]);
+
+                    println!("{}: {}", i + 1, highlighted);
                 }
             }
         }
