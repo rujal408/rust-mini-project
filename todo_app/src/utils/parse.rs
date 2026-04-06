@@ -65,6 +65,17 @@ pub fn parse_command(args: Vec<String>) -> Option<Command> {
 
         "clear" => Some(Command::Clear),
         "help" => Some(Command::Help),
+        "grep" => {
+            if args.len() < 4 {
+                println!("Usage: grep <keyword> <file>");
+                return None;
+            }
+
+            let keyword = args[2].clone();
+            let filename = args[3].clone();
+
+            Some(Command::Grep(keyword, filename))
+        }
 
         _ => {
             println!("Unknown command");

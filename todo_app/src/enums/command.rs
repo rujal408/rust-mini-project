@@ -6,4 +6,5 @@ pub enum Command {
     Delete(usize),
     Clear,
     Help,
+    Grep(String, String),
 }

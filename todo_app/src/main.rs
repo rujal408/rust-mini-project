@@ -112,5 +112,21 @@ fn main() {
             println!("clear               Remove all tasks");
             println!("help                Show this help message");
         }
+
+        Command::Grep(keyword, filename) => {
+            let content = match fs::read_to_string(&filename) {
+                Ok(data) => data,
+                Err(_) => {
+                    println!("❌ Failed to read file");
+                    return;
+                }
+            };
+
+            for line in content.lines() {
+                if line.contains(&keyword) {
+                    println!("{}", line);
+                }
+            }
+        }
     }
 }
