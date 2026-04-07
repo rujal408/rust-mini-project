@@ -53,24 +53,17 @@ fn update_file(todos: Vec<Todo>, file_name: &str) {
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-    if args.len() < 2 {
-        println!("Usage: cargo run <command> <value>");
-        return;
-    }
-
-    let command = match parse_command(args) {
-        Some(cmd) => cmd,
+    let (command, file_name) = match parse_command(args) {
+        Some(res) => res,
         None => return,
     };
-
-    let file_name = "files/todos.txt";
 
     match command {
         Command::Add(value) => {
             let mut file = OpenOptions::new()
                 .append(true)
                 .create(true)
-                .open(file_name)
+                .open(&file_name)
                 .expect("Failed to open file");
 
             writeln!(file, "[ ] {}", value).expect("Failed to write");
@@ -78,7 +71,7 @@ fn main() {
         }
 
         Command::List => {
-            let todos = get_todos(file_name);
+            let todos = get_todos(&file_name);
 
             for todo in &todos {
                 let status = if todo.completed { "[x]" } else { "[ ]" };
@@ -87,21 +80,21 @@ fn main() {
         }
 
         Command::Edit(index, text) => {
-            let mut todos = get_todos(file_name);
+            let mut todos = get_todos(&file_name);
             todos[index].text = text;
-            update_file(todos, file_name);
+            update_file(todos, &file_name);
         }
 
         Command::Delete(index) => {
-            let mut todos = get_todos(file_name);
+            let mut todos = get_todos(&file_name);
             todos.remove(index);
-            update_file(todos, file_name);
+            update_file(todos, &file_name);
         }
 
         Command::Complete(index) => {
-            let mut todos = get_todos(file_name);
+            let mut todos = get_todos(&file_name);
             todos[index].completed = true;
-            update_file(todos, file_name);
+            update_file(todos, &file_name);
         }
 
         Command::Clear => {
@@ -111,7 +104,7 @@ fn main() {
             io::stdin().read_line(&mut input).expect("Failed to read");
 
             if input.trim() == "y" {
-                fs::write(file_name, "").expect("Failed to clear file");
+                fs::write(&file_name, "").expect("Failed to clear file");
                 println!("All tasks cleared");
             } else {
                 println!("Cancelled");

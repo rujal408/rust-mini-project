@@ -1,31 +1,34 @@
 use crate::enums::Command;
 
-pub fn parse_command(args: Vec<String>) -> Option<Command> {
-    if args.len() < 2 {
-        println!("Usage: cargo run <command> [value]");
+pub fn parse_command(args: Vec<String>) -> Option<(Command, String)> {
+    if args.len() < 3 {
+        println!("Usage: cargo run <file_path> <command> [value]");
+        println!("Example: cargo run -- files/todos.txt add \"Buy milk\"");
         return None;
     }
+
+    let file_name = args[1].clone();
     println!("Overall args: {:?}", args);
 
-    match args[1].as_str() {
+    match args[2].as_str() {
         "add" => {
-            if args.len() < 3 {
+            if args.len() < 4 {
                 println!("Please provide a task");
                 return None;
             }
-            Some(Command::Add(args[2..].join(" ").clone()))
+            Some((Command::Add(args[3..].join(" ").clone()), file_name))
         }
 
-        "list" => Some(Command::List),
+        "list" => Some((Command::List, file_name)),
 
         "complete" => {
-            if args.len() < 3 {
+            if args.len() < 4 {
                 println!("Please provide index");
                 return None;
             }
 
-            match args[2].parse() {
-                Ok(i) => Some(Command::Complete(i)),
+            match args[3].parse() {
+                Ok(i) => Some((Command::Complete(i), file_name)),
                 Err(_) => {
                     println!("Invalid number");
                     None
@@ -34,13 +37,13 @@ pub fn parse_command(args: Vec<String>) -> Option<Command> {
         }
 
         "delete" => {
-            if args.len() < 3 {
+            if args.len() < 4 {
                 println!("Please provide index");
                 return None;
             }
 
-            match args[2].parse() {
-                Ok(i) => Some(Command::Delete(i)),
+            match args[3].parse() {
+                Ok(i) => Some((Command::Delete(i), file_name)),
                 Err(_) => {
                     println!("Invalid number");
                     None
@@ -49,33 +52,33 @@ pub fn parse_command(args: Vec<String>) -> Option<Command> {
         }
 
         "edit" => {
-            if args.len() < 4 {
+            if args.len() < 5 {
                 println!("Please provide <index> and <new text>");
                 return None;
             }
 
-            let index = match args[2].parse() {
+            let index = match args[3].parse() {
                 Ok(i) => i,
                 Err(_) => {
                     println!("Invalid index");
                     return None;
                 }
             };
-            Some(Command::Edit(index, args[3..].join(" ").clone()))
+            Some((Command::Edit(index, args[4..].join(" ").clone()), file_name))
         }
 
-        "clear" => Some(Command::Clear),
-        "help" => Some(Command::Help),
+        "clear" => Some((Command::Clear, file_name)),
+        "help" => Some((Command::Help, file_name)),
         "grep" => {
-            if args.len() < 4 {
-                println!("Usage: grep [-i] [-n] <keyword> <file>");
+            if args.len() < 5 {
+                println!("Usage: cargo run <file_path> grep [-i] [-n] <keyword> <grep_file>");
                 return None;
             }
 
             let mut ignore_case = false;
             let mut show_line_number = false;
 
-            let mut index = 2;
+            let mut index = 3;
 
             // Parse flags
             while args[index].starts_with("-") {
@@ -98,12 +101,12 @@ pub fn parse_command(args: Vec<String>) -> Option<Command> {
             let keyword = args[index].clone();
             let filename = args[index + 1].clone();
 
-            Some(Command::Grep {
+            Some((Command::Grep {
                 keyword,
                 filename,
                 ignore_case,
                 show_line_number,
-            })
+            }, file_name))
         }
 
         _ => {
