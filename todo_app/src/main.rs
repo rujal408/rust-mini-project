@@ -4,9 +4,11 @@ mod utils;
 use colored::*;
 use std::env;
 use std::fs;
+use std::fs::File;
 use std::fs::OpenOptions;
 use std::io;
 use std::io::Write;
+use std::io::{BufRead, BufReader};
 use utils::parse_command;
 
 struct Todo {
@@ -15,10 +17,23 @@ struct Todo {
 }
 
 fn get_todos() -> Vec<Todo> {
-    let content = fs::read_to_string("todos.txt").unwrap_or(String::from("No tasks found"));
+    let file = match File::open("files/todos.txt") {
+        Ok(f) => f,
+        Err(_) => {
+            println!("❌ Failed to open file");
+            return Vec::new();
+        }
+    };
+
+    let content = BufReader::new(file);
+    // let content = fs::read_to_string("files/todos.txt").unwrap_or(String::from("No tasks found"));
     let mut todos: Vec<Todo> = Vec::new();
 
-    for line in content.lines() {
+    for (_, line_result) in content.lines().enumerate() {
+        let line = match line_result {
+            Ok(l) => l,
+            Err(_) => continue,
+        };
         let completed = line.starts_with("[x]");
         let text = line[4..].to_string();
 
@@ -28,7 +43,7 @@ fn get_todos() -> Vec<Todo> {
 }
 
 fn update_file(todos: Vec<Todo>) {
-    let mut file = fs::File::create("todos.txt").expect("Failed to open file");
+    let mut file = fs::File::create("files/todos.txt").expect("Failed to open file");
     for todo in &todos {
         let status = if todo.completed { "[x]" } else { "[ ]" };
         writeln!(file, "{} {}", status, todo.text).expect("Failed to write");
@@ -55,7 +70,7 @@ fn main() {
             let mut file = OpenOptions::new()
                 .append(true)
                 .create(true)
-                .open("todos.txt")
+                .open("files/todos.txt")
                 .expect("Failed to open file");
 
             writeln!(file, "[ ] {}", value).expect("Failed to write");
@@ -96,7 +111,7 @@ fn main() {
             io::stdin().read_line(&mut input).expect("Failed to read");
 
             if input.trim() == "y" {
-                fs::write("todos.txt", "").expect("Failed to clear file");
+                fs::write("files/todos.txt", "").expect("Failed to clear file");
                 println!("All tasks cleared");
             } else {
                 println!("Cancelled");
@@ -121,8 +136,8 @@ fn main() {
             ignore_case,
             show_line_number,
         } => {
-            let content = match fs::read_to_string(&filename) {
-                Ok(data) => data,
+            let file = match File::open(&filename) {
+                Ok(f) => f,
                 Err(_) => {
                     println!("❌ Failed to read file");
                     return;
@@ -135,7 +150,13 @@ fn main() {
                 keyword.clone()
             };
 
-            for (i, line) in content.lines().enumerate() {
+            let content = BufReader::new(file);
+
+            for (i, line_result) in content.lines().enumerate() {
+                let line = match line_result {
+                    Ok(l) => l,
+                    Err(_) => continue,
+                };
                 let line_lower = line.to_lowercase();
                 if line_lower.contains(&keyword_lower) {
                     let mut highlighted = String::new();
