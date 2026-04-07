@@ -5,6 +5,7 @@ pub fn parse_command(args: Vec<String>) -> Option<Command> {
         println!("Usage: cargo run <command> [value]");
         return None;
     }
+    println!("Overall args: {:?}", args);
 
     match args[1].as_str() {
         "add" => {
