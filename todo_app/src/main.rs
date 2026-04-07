@@ -16,8 +16,8 @@ struct Todo {
     completed: bool,
 }
 
-fn get_todos() -> Vec<Todo> {
-    let file = match File::open("files/todos.txt") {
+fn get_todos(file_name: &str) -> Vec<Todo> {
+    let file = match File::open(file_name) {
         Ok(f) => f,
         Err(_) => {
             println!("❌ Failed to open file");
@@ -26,7 +26,7 @@ fn get_todos() -> Vec<Todo> {
     };
 
     let content = BufReader::new(file);
-    // let content = fs::read_to_string("files/todos.txt").unwrap_or(String::from("No tasks found"));
+
     let mut todos: Vec<Todo> = Vec::new();
 
     for (_, line_result) in content.lines().enumerate() {
@@ -42,8 +42,8 @@ fn get_todos() -> Vec<Todo> {
     todos
 }
 
-fn update_file(todos: Vec<Todo>) {
-    let mut file = fs::File::create("files/todos.txt").expect("Failed to open file");
+fn update_file(todos: Vec<Todo>, file_name: &str) {
+    let mut file = fs::File::create(file_name).expect("Failed to open file");
     for todo in &todos {
         let status = if todo.completed { "[x]" } else { "[ ]" };
         writeln!(file, "{} {}", status, todo.text).expect("Failed to write");
@@ -52,8 +52,6 @@ fn update_file(todos: Vec<Todo>) {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-
-    // let todos: Vec<Todo> = vec![];
 
     if args.len() < 2 {
         println!("Usage: cargo run <command> <value>");
@@ -65,12 +63,14 @@ fn main() {
         None => return,
     };
 
+    let file_name = "files/todos.txt";
+
     match command {
         Command::Add(value) => {
             let mut file = OpenOptions::new()
                 .append(true)
                 .create(true)
-                .open("files/todos.txt")
+                .open(file_name)
                 .expect("Failed to open file");
 
             writeln!(file, "[ ] {}", value).expect("Failed to write");
@@ -78,7 +78,7 @@ fn main() {
         }
 
         Command::List => {
-            let todos = get_todos();
+            let todos = get_todos(file_name);
 
             for todo in &todos {
                 let status = if todo.completed { "[x]" } else { "[ ]" };
@@ -87,21 +87,21 @@ fn main() {
         }
 
         Command::Edit(index, text) => {
-            let mut todos = get_todos();
+            let mut todos = get_todos(file_name);
             todos[index].text = text;
-            update_file(todos);
+            update_file(todos, file_name);
         }
 
         Command::Delete(index) => {
-            let mut todos = get_todos();
+            let mut todos = get_todos(file_name);
             todos.remove(index);
-            update_file(todos);
+            update_file(todos, file_name);
         }
 
         Command::Complete(index) => {
-            let mut todos = get_todos();
+            let mut todos = get_todos(file_name);
             todos[index].completed = true;
-            update_file(todos);
+            update_file(todos, file_name);
         }
 
         Command::Clear => {
@@ -111,7 +111,7 @@ fn main() {
             io::stdin().read_line(&mut input).expect("Failed to read");
 
             if input.trim() == "y" {
-                fs::write("files/todos.txt", "").expect("Failed to clear file");
+                fs::write(file_name, "").expect("Failed to clear file");
                 println!("All tasks cleared");
             } else {
                 println!("Cancelled");
