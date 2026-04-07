@@ -8,7 +8,6 @@ pub enum Command {
     Help,
     Grep {
         keyword: String,
-        filename: String,
         ignore_case: bool,
         show_line_number: bool,
     },

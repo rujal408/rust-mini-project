@@ -101,12 +101,14 @@ pub fn parse_command(args: Vec<String>) -> Option<(Command, String)> {
             let keyword = args[index].clone();
             let filename = args[index + 1].clone();
 
-            Some((Command::Grep {
-                keyword,
+            Some((
+                Command::Grep {
+                    keyword,
+                    ignore_case,
+                    show_line_number,
+                },
                 filename,
-                ignore_case,
-                show_line_number,
-            }, file_name))
+            ))
         }
 
         _ => {

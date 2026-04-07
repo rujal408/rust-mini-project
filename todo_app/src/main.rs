@@ -125,11 +125,10 @@ fn main() {
 
         Command::Grep {
             keyword,
-            filename,
             ignore_case,
             show_line_number,
         } => {
-            let file = match File::open(&filename) {
+            let file = match File::open(&file_name) {
                 Ok(f) => f,
                 Err(_) => {
                     println!("❌ Failed to read file");
