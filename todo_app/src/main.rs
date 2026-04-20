@@ -59,6 +59,21 @@ fn main() {
     };
 
     match command {
+        Command::Help => {
+            println!("Available commands:");
+            println!("add filename <task>                                          Add a new task");
+            println!("list filename                                                Show all tasks");
+            println!(
+                "complete filename <index>                                    Mark task as completed"
+            );
+            println!("delete filename <index>                                      Delete a task");
+            println!("edit filename <index> <text>                                 Edit a task");
+            println!(
+                "clear filename                                               Remove all tasks"
+            );
+            println!("help                                                Show this help message");
+            println!("grep -i(optional) -n(optional) <keyword> <filename> Search content from file")
+        }
         Command::Create => {
             OpenOptions::new()
                 .create(true)
@@ -78,7 +93,6 @@ fn main() {
             writeln!(file, "[ ] {}", value).expect("Failed to write");
             println!("Task added: {}", value);
         }
-
         Command::List => {
             let todos = get_todos(&file_name);
 
@@ -118,22 +132,6 @@ fn main() {
             } else {
                 println!("Cancelled");
             }
-        }
-
-        Command::Help => {
-            println!("Available commands:");
-            println!("add filename <task>                                          Add a new task");
-            println!("list filename                                                Show all tasks");
-            println!(
-                "complete filename <index>                                    Mark task as completed"
-            );
-            println!("delete filename <index>                                      Delete a task");
-            println!("edit filename <index> <text>                                 Edit a task");
-            println!(
-                "clear filename                                               Remove all tasks"
-            );
-            println!("help                                                Show this help message");
-            println!("grep -i(optional) -n(optional) <keyword> <filename> Search content from file")
         }
 
         Command::Grep {

@@ -7,10 +7,10 @@ pub fn parse_command(args: Vec<String>) -> Option<(Command, String)> {
         return None;
     }
 
-    let file_name = args[1].clone();
+    let file_name = args[2].clone();
     println!("Overall args: {:?}", args);
 
-    match args[2].as_str() {
+    match args[1].as_str() {
         "create" => Some((Command::Create, file_name)),
         "add" => {
             if args.len() < 4 {
@@ -69,7 +69,7 @@ pub fn parse_command(args: Vec<String>) -> Option<(Command, String)> {
         }
 
         "clear" => Some((Command::Clear, file_name)),
-        "help" => Some((Command::Help, file_name)),
+        "help" => Some((Command::Help, String::new())),
         "grep" => {
             if args.len() < 5 {
                 println!("Usage: cargo run <file_path> grep [-i] [-n] <keyword> <grep_file>");
