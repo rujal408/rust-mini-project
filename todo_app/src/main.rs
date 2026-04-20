@@ -113,12 +113,16 @@ fn main() {
 
         Command::Help => {
             println!("Available commands:");
-            println!("add <task>                                          Add a new task");
-            println!("list                                                Show all tasks");
-            println!("complete <index>                                    Mark task as completed");
-            println!("delete <index>                                      Delete a task");
-            println!("edit <index> <text>                                 Edit a task");
-            println!("clear                                               Remove all tasks");
+            println!("add filename <task>                                          Add a new task");
+            println!("list filename                                                Show all tasks");
+            println!(
+                "complete filename <index>                                    Mark task as completed"
+            );
+            println!("delete filename <index>                                      Delete a task");
+            println!("edit filename <index> <text>                                 Edit a task");
+            println!(
+                "clear filename                                               Remove all tasks"
+            );
             println!("help                                                Show this help message");
             println!("grep -i(optional) -n(optional) <keyword> <filename> Search content from file")
         }
@@ -128,6 +132,10 @@ fn main() {
             ignore_case,
             show_line_number,
         } => {
+            println!("Keyword: {}", keyword);
+            println!("Ignore case: {}", ignore_case);
+            println!("Show line number: {}", show_line_number);
+            println!("File name: {}", file_name);
             let file = match File::open(&file_name) {
                 Ok(f) => f,
                 Err(_) => {
@@ -149,6 +157,7 @@ fn main() {
                     Ok(l) => l,
                     Err(_) => continue,
                 };
+
                 let line_lower = line.to_lowercase();
                 if line_lower.contains(&keyword_lower) {
                     let mut highlighted = String::new();

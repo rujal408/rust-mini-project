@@ -78,7 +78,7 @@ pub fn parse_command(args: Vec<String>) -> Option<(Command, String)> {
             let mut ignore_case = false;
             let mut show_line_number = false;
 
-            let mut index = 3;
+            let mut index = 2;
 
             // Parse flags
             while args[index].starts_with("-") {
@@ -99,7 +99,6 @@ pub fn parse_command(args: Vec<String>) -> Option<(Command, String)> {
             }
 
             let keyword = args[index].clone();
-            let filename = args[index + 1].clone();
 
             Some((
                 Command::Grep {
@@ -107,7 +106,7 @@ pub fn parse_command(args: Vec<String>) -> Option<(Command, String)> {
                     ignore_case,
                     show_line_number,
                 },
-                filename,
+                file_name,
             ))
         }
 

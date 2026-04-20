@@ -1,7 +1,0 @@
-[ ] Three
-[ ] Four
-[ ] Ten
-[ ] Eleven
-[ ] Twenty
-[ ] Twenty One
-[ ] Twelve
