@@ -59,6 +59,15 @@ fn main() {
     };
 
     match command {
+        Command::Create => {
+            OpenOptions::new()
+                .create(true)
+                .append(true)
+                .open(&file_name)
+                .expect("Failed to create file");
+
+            println!("File {} has been created", file_name);
+        }
         Command::Add(value) => {
             let mut file = OpenOptions::new()
                 .append(true)

@@ -1,4 +1,5 @@
 pub enum Command {
+    Create,
     Add(String),
     List,
     Complete(usize),

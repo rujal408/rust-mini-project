@@ -11,6 +11,7 @@ pub fn parse_command(args: Vec<String>) -> Option<(Command, String)> {
     println!("Overall args: {:?}", args);
 
     match args[2].as_str() {
+        "create" => Some((Command::Create, file_name)),
         "add" => {
             if args.len() < 4 {
                 println!("Please provide a task");
